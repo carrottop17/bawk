@@ -18,8 +18,8 @@ The user can follow other users, and view profile.
 * MySQL
 
 ##Local Installation Requirements
-pip install Flask
-pip install flask-mysql
-pip install bcrypt
+`pip install Flask flask-mysql bcrypt`
+`python main.py`
+
 
 ##Demo

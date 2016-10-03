@@ -1,4 +1,28 @@
 /* line 1, ../../compass/sass/styles.scss */
 body {
-  background-color: #1d96d7;
+  background-color: #FFC439;
+  color: #533602;
+}
+
+/* line 5, ../../compass/sass/styles.scss */
+#register {
+  margin-right: 10px;
+}
+
+/* line 8, ../../compass/sass/styles.scss */
+.navbar {
+  margin-bottom: 0px;
+  background-color: #FDEDD0;
+  border: 0px;
+  border-radius: 0px;
+}
+
+/* line 14, ../../compass/sass/styles.scss */
+.navbar-brand {
+  padding: 8px 15px;
+}
+
+/* line 17, ../../compass/sass/styles.scss */
+.main_content {
+  margin-bottom: 20px;
 }
