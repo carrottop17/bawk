@@ -1,7 +1,6 @@
 {% extends 'layout.html' %}
 {% block body %}
 
-
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
@@ -11,10 +10,18 @@
 
                 </div>
                 <div class="panel-body">
+                {% if message %}
                   <div class="alert alert-danger">
-                		<a class="close" data-dismiss="alert" href="#">×</a>Incorrect Username or Password!
+                		<a class="close" data-dismiss="alert" href="#">×</a>{{message}}
             		</div>
-                    <form>
+                {% endif %}
+                    <form method="post" action="/register_submit">
+                        <div class="form-group has-error">
+                            <input class="form-control input-lg" placeholder="Name" name="name" type="text">
+                        </div>
+                        <div class="form-group has-error">
+                            <input class="form-control input-lg" placeholder="User Name" name="user_name" type="text">
+                        </div>
                         <div class="form-group has-error">
                             <input class="form-control input-lg" placeholder="E-mail Address" name="email" type="text">
                         </div>
