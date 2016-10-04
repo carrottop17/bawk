@@ -11,6 +11,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="/static/javascript/scripts.js"></script>
 
 </head>
 <body>
@@ -24,9 +25,18 @@
     </div>
     <a class="btn btn-default navbar-btn" href="/">Home</a>
     <ul class="nav navbar-nav navbar-right">
-    	<a class="btn btn-default navbar-btn" href="/sign_in" id="sign_in">Sign In</a>
-    	<a class="btn btn-default navbar-btn" href="/logout" id="sign_in">Log Out</a>
-    	<a class="btn btn-default navbar-btn" href="/register" id="register">Register</a>
+		{% if session['username'] %}
+        	Welcome {{session['username']}}
+        	<a class="btn btn-default navbar-btn" href="/logout" id="logout">Log Out</a>
+        {% else %}
+        	<a class="btn btn-default navbar-btn" href="/sign_in" id="sign_in">Sign In</a>
+        	<a class="btn btn-default navbar-btn" href="/register" id="register">Register</a>
+        {% endif %}        	
+
+       
+    	
+    	
+    	
     </ul>
   </div>
 </nav>

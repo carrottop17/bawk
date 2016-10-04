@@ -1,5 +1,5 @@
 # Import flask stuff
-from flask import Flask, render_template, redirect, request, redirect, session
+from flask import Flask, render_template, redirect, request, session, jsonify
 # import mysql module
 from flaskext.mysql import MySQL
 import bcrypt
@@ -25,7 +25,49 @@ app.secret_key = 'hpiuadfnadf938498h087y3ry087yafhgbhfb8y08y08yqwer342134'
 #create route
 @app.route('/')
 def index():
-	return render_template('index.html')
+	current_posts_query = "SELECT * from buzzes left join user on buzzes.uid = user.id left join votes on votes.pid = buzzes.id order by date DESC"
+	
+	cursor.execute(current_posts_query)
+	current_posts_result = cursor.fetchall()
+	return render_template('index.html',
+		posts = current_posts_result
+		)
+
+@app.route('/process_vote', methods=['POST'])
+def process_vote():
+	# check to see has the user voted on this particular item
+	pid = request.form['vid'] #the post they voted on.  THis came from jquery ajax
+	vote_type = request.form['voteType']
+	check_user_votes_query = "SELECT * FROM votes inner join user on user.id = votes.uid where user.username = '%s' and votes.pid ='%s'" % (session['username'], pid)
+	cursor.execute(check_user_votes_query)
+	check_user_votes_result = cursor.fetchone()
+	# its possible we get none back because the user hasnt voted on this post_content
+	if check_user_votes_result is None:
+		insert_user_vote_query = "INSERT into votes (pid, uid, vote_type) values ('"+str(pid)+"', '"+str(session['id'])+"', '"+str(vote_type)+"')"
+		cursor.execute(insert_user_vote_query)
+		conn.commit()
+		return jsonify("voteCounted")
+	else:
+		check_user_vote_direction_query = "SELECT * FROM votes INNER JOIN user ON user.id = votes.uid WHERE user.username = '%s' AND votes.pid = '%s' AND votes.vote_type = %s" % (session['username'], pid, vote_type)
+		cursor.execute(check_user_vote_direction_query)
+		check_user_vote_direction_result = cursor.fetchone()
+		if check_user_vote_direction_result is None:
+			# User has voted, but not this direction. Update
+			update_user_vote_query = "UPDATE votes SET vote_type = %s WHERE uid = '%s' AND pid = '%s'" % (vote_type, session['id'], pid)
+			cursor.execute(update_user_vote_query)
+			conn.commit()
+			return "voteChanged"
+		else:
+			# User has already voted this directino on this post. No dice.
+			return "alreadyVoted"
+
+
+# @app.route('/vote', methods=['POST'])
+# def vote():
+# 	update_current_vote = "UPDATE buzzes set current_vote = 'current_vote + 1' where id = 2"
+# 	cursor.execute(update_current_vote)
+# 	return redirect('/')
+
 
 @app.route('/register')
 def register():
@@ -52,6 +94,7 @@ def register_submit():
 		username_insert = "insert into user values (default, '"+real_name+"', '"+username+"', '"+hashed_password+"', '"+email+"')"
 		cursor.execute(username_insert)
 		conn.commit()
+		session['username'] = request.form['user_name']
 		return render_template('index.html')
 	else:
 		return redirect('/register?username=taken')
@@ -68,7 +111,7 @@ def sign_in():
 @app.route('/sign_in_submit', methods = ['POST'])
 def sign_in_submit():
 	password = request.form['password'].encode('utf-8')
-	hashed_password_from_mysql = "select password from user where username = '%s'" % request.form['username']
+	hashed_password_from_mysql = "select password, id from user where username = '%s'" % request.form['username']
 	cursor.execute(hashed_password_from_mysql)
 	hashed_password = cursor.fetchone()
 	# To check a hash against english:
@@ -76,6 +119,7 @@ def sign_in_submit():
 		return render_template("sign_in.html", message = "Wrong Username.")
 	if bcrypt.checkpw(password, hashed_password[0].encode('utf-8')):
 		session['username'] = request.form['username']
+		session['id'] = hashed_password[1]
 		return redirect('/')
 	else:
 		return render_template("sign_in.html", message = "Wrong Password.")
@@ -85,6 +129,18 @@ def logout():
 	#nuke their session vars.  This will end the session which is what we use to let them into the portal
 	session.clear()
 	return redirect('/sign_in?message=LoggedOut')
+
+@app.route('/post_submit', methods=['POST'])
+def post_submit():
+	post_content = request.form['post_content']
+	get_user_id_query = "select id from user where username = '%s'" % session['username']
+	cursor.execute(get_user_id_query)
+	get_user_id_result = cursor.fetchone()
+	user_id = get_user_id_result[0]
+	insert_post_query = "insert into buzzes (post_content, uid, current_vote) values ('"+post_content+"', "+str(user_id)+", 0)"
+	cursor.execute(insert_post_query)
+	conn.commit()
+	return redirect('/')
 
 		
 

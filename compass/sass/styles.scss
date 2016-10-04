@@ -5,6 +5,9 @@ body{
 #register{
 	margin-right: 10px;
 }
+#logout{
+	margin-right: 10px;
+}
 .navbar{
 	margin-bottom: 0px;
 	background-color: #FDEDD0;
@@ -16,4 +19,17 @@ body{
 }
 .main_content{
 	margin-bottom: 20px;
+}
+.post_submit{
+	background-color: #FEA008;
+	text-align: center;
+	border-radius: 5px;
+	padding: 20px;
+	margin-bottom: 20px;
+}
+.all_posts{
+	background-color: #FDEDD0;
+	border-radius: 5px;
+	padding: 10px;
+	margin-bottom: 10px;
 }
