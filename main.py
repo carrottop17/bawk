@@ -25,8 +25,8 @@ app.secret_key = 'hpiuadfnadf938498h087y3ry087yafhgbhfb8y08y08yqwer342134'
 #create route
 @app.route('/')
 def index():
-	current_posts_query = "SELECT * from buzzes left join user on buzzes.uid = user.id left join votes on votes.pid = buzzes.id order by date DESC"
-	
+	current_posts_query = "SELECT buzzes.id, pid, post_content, date, username, SUM(vote_type) as total from buzzes left join user on buzzes.uid = user.id left join votes on votes.pid = buzzes.id group by buzzes.id, votes.pid, post_content, date, username order by date DESC"
+	# vote_count_query = "SELECT pid, SUM(vote_type) from votes group by pid"
 	cursor.execute(current_posts_query)
 	current_posts_result = cursor.fetchall()
 	return render_template('index.html',
@@ -56,10 +56,13 @@ def process_vote():
 			update_user_vote_query = "UPDATE votes SET vote_type = %s WHERE uid = '%s' AND pid = '%s'" % (vote_type, session['id'], pid)
 			cursor.execute(update_user_vote_query)
 			conn.commit()
-			return "voteChanged"
+			get_new_total_query = "SELECT sum(vote_type) as vote_total from votes where pid = '%s' group by pid" % pid
+			cursor.execute(get_new_total_query)
+			get_new_total_result = cursor.fetchone()
+			return jsonify({'message': "voteChanged", 'vote_total': int(get_new_total_result[0])})
 		else:
 			# User has already voted this directino on this post. No dice.
-			return "alreadyVoted"
+			return jsonify({'message': "alreadyVoted"})
 
 
 # @app.route('/vote', methods=['POST'])
@@ -141,6 +144,24 @@ def post_submit():
 	cursor.execute(insert_post_query)
 	conn.commit()
 	return redirect('/')
+
+@app.route('/follow')
+def follow():
+	get_all_not_me_users_query = "SELECT * from users where id != '%s'" % session['id']
+	# cursor.execute(get_all_not_me_users_query)
+	# get_all_not_me_users_result = cursor.fetchall()
+	# who user is following
+	# we want username and id
+	get_all_following_query = "SELECT u.username, f.uid_of_user_being_followed from follow f left join user u on u.id = f.uid_of_user_being_followed where f.uid_of_user_following = '%s'" % session['id']
+	cursor.execute(get_all_following_query)
+	get_all_following_result = cursor.fetchall()
+	# all users in user table minus those user is following
+	get_all_not_following_query = "SELECT id, username from user where id not in (select uid_of_user_being_followed from follow where uid_of_user_following = '%s') and id != '%s'" % (session['id'], session['id'])
+	cursor.execute(get_all_not_following_query)
+	get_all_not_following_result = cursor.fetchall()
+	# get_all_following_query = "SELECT * from follow inner join user on follow.uid_of_user_following = '%s'" % session['id']
+	return render_template ('follow.html')
+
 
 		
 

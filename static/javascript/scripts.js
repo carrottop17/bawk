@@ -11,6 +11,11 @@ $(document).ready(function(){
 			type: "post",
 			data: {vid:vid, voteType:voteType},
 			success: function(result){
+				if(result.message == 'voteChanged'){
+					$("div[up-down-id='" + vid + "']").html(result.vote_total)
+				}else if(result.message == 'alreadyVoted'){
+					$("div[up-down-id='" + vid + "']").html('you have already voted on this buzz')
+				}
 				console.log(result)
 			}
 

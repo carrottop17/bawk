@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Bawk!</title>
+	<title>Buzzz!</title>
 
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -27,6 +27,7 @@
     <ul class="nav navbar-nav navbar-right">
 		{% if session['username'] %}
         	Welcome {{session['username']}}
+          <a class="btn btn-default navbar-btn" href="/follow" id="follow">Following</a>
         	<a class="btn btn-default navbar-btn" href="/logout" id="logout">Log Out</a>
         {% else %}
         	<a class="btn btn-default navbar-btn" href="/sign_in" id="sign_in">Sign In</a>

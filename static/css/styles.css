@@ -48,3 +48,14 @@ body {
   padding: 10px;
   margin-bottom: 10px;
 }
+
+/* line 36, ../../compass/sass/styles.scss */
+.unfollow, .follow {
+  margin-left: 20px;
+}
+
+/* line 39, ../../compass/sass/styles.scss */
+.vote-up-down-number {
+  text-align: center;
+  font-weight: bold;
+}
