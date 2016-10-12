@@ -29,8 +29,12 @@ def index():
 	# vote_count_query = "SELECT pid, SUM(vote_type) from votes group by pid"
 	cursor.execute(current_posts_query)
 	current_posts_result = cursor.fetchall()
+	followers_query = "SELECT username, uid_of_user_being_followed, count(uid_of_user_following) from follow left join user on user.id = follow.uid_of_user_being_followed group by uid_of_user_being_followed"
+	cursor.execute(followers_query)
+	followers_result = cursor.fetchall()
 	return render_template('index.html',
-		posts = current_posts_result
+		posts = current_posts_result,
+		followers = followers_result
 		)
 
 @app.route('/process_vote', methods=['POST'])

@@ -70,7 +70,11 @@
 </div>
 
 <div class="container main_content">
-  <div class='marquee'>Longer text lorem ipsum dolor sit amet, consectetur adipiscing elit END.</div>
+  <div class='marquee'>
+    {% for row in followers: %}
+      <b>{{row[0]}}</b> - followers: {{row[2]}}
+    {% endfor %}
+  </div>
   <h1>Bees Need Us: Protect Habitat Today!</h1>
 
   <p>You can help take on the biggest threats to nature today -- like the fight to save bees.</p>
