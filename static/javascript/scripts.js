@@ -1,3 +1,11 @@
+$(function() {
+  $('.marquee').marquee({
+    duration: 5000,
+    startVisible: true,
+    duplicated: true
+  });
+});
+
 $(document).ready(function(){
 	$('.vote').click(function(){
 		var vid = $(this).attr('postid')
@@ -22,3 +30,4 @@ $(document).ready(function(){
 		})
 	})
 });
+

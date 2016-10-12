@@ -59,3 +59,12 @@ body {
   text-align: center;
   font-weight: bold;
 }
+
+/* line 43, ../../compass/sass/styles.scss */
+.marquee {
+  width: 300px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background: black;
+  color: #caffc3;
+}

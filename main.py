@@ -98,7 +98,11 @@ def register_submit():
 		cursor.execute(username_insert)
 		conn.commit()
 		session['username'] = request.form['user_name']
-		return render_template('index.html')
+		hashed_password_from_mysql = "select password, id from user where username = '%s'" % session['username']
+		cursor.execute(hashed_password_from_mysql)
+		session_id = cursor.fetchone()
+		session['id'] = session_id[1]
+		return redirect('/')
 	else:
 		return redirect('/register?username=taken')
 	print check_username_result
@@ -148,11 +152,9 @@ def post_submit():
 @app.route('/follow')
 def follow():
 	get_all_not_me_users_query = "SELECT * from users where id != '%s'" % session['id']
-	# cursor.execute(get_all_not_me_users_query)
-	# get_all_not_me_users_result = cursor.fetchall()
 	# who user is following
 	# we want username and id
-	get_all_following_query = "SELECT u.username, f.uid_of_user_being_followed from follow f left join user u on u.id = f.uid_of_user_being_followed where f.uid_of_user_following = '%s'" % session['id']
+	get_all_following_query = "SELECT f.uid_of_user_being_followed, u.username from follow f left join user u on u.id = f.uid_of_user_being_followed where f.uid_of_user_following = '%s'" % session['id']
 	cursor.execute(get_all_following_query)
 	get_all_following_result = cursor.fetchall()
 	# all users in user table minus those user is following
@@ -160,10 +162,26 @@ def follow():
 	cursor.execute(get_all_not_following_query)
 	get_all_not_following_result = cursor.fetchall()
 	# get_all_following_query = "SELECT * from follow inner join user on follow.uid_of_user_following = '%s'" % session['id']
-	return render_template ('follow.html')
+	return render_template ('follow.html',
+		following_list = get_all_following_result,
+		not_following_list = get_all_not_following_result
+	)
 
+@app.route('/follow_user')
+def follow_user():
+	user_id_to_follow = request.args.get('user_id')
+	follow_query = "INSERT into follow (uid_of_user_being_followed, uid_of_user_following) values ('%s', '%s')" % (user_id_to_follow, session['id'])
+	cursor.execute(follow_query)
+	conn.commit()
+	return redirect('/follow')
 
-		
+@app.route('/unfollow_user')
+def unfollow_user():
+	user_id_to_unfollow = request.args.get('user_id')
+	unfollow_query = "DELETE from follow where uid_of_user_being_followed = '%s' and uid_of_user_following = '%s'" % (user_id_to_unfollow, session['id'])
+	cursor.execute(unfollow_query)
+	conn.commit()
+	return redirect('/follow')
 
 if __name__ == "__main__":
 	app.run(debug=True)

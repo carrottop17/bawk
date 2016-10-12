@@ -40,3 +40,10 @@ body{
 	text-align: center;
 	font-weight: bold;
 }
+.marquee {
+  width: 300px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background: black;
+  color: rgb(202, 255, 195);
+}

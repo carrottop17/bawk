@@ -11,6 +11,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="/static/javascript/jquery.marquee.js"></script>
 	<script src="/static/javascript/scripts.js"></script>
 
 </head>
@@ -23,7 +24,9 @@
         <img alt="Brand" src="static/images/dead_bee.png">
       </a>
     </div>
+
     <a class="btn btn-default navbar-btn" href="/">Home</a>
+    
     <ul class="nav navbar-nav navbar-right">
 		{% if session['username'] %}
         	Welcome {{session['username']}}
